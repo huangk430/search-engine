@@ -1,3 +1,31 @@
+# Letters!
+# this will override it!
+def mergefiles(files, openMergedFile):
+    seen = set()
+    for i in range(len(files)):
+        file = files[i]
+        line_list = [line.rstrip('\n') for line in file]
+        postingStr = ""
+        for line in line_list:
+            #stringlst: ["Kelly", " (1,2)"]
+            stringlst = line.split(":")
+            token = stringlst[0]
+            posting = stringlst[1]
+            
+
+            if token not in seen:
+                if postingStr != "":
+                    openMergedFile.write(postingStr + "\n")
+                    postingStr = ""
+                postingStr += f'{token}:{posting}'
+
+            else:
+                postingStr += posting
+
+            #mark token as seen
+            seen.add(token)
+
+
 afile = open("partialindex/a.txt", "r")
 bfile = open("partialindex/b.txt", "r")
 cfile = open("partialindex/c.txt", "r")
@@ -56,6 +84,8 @@ sortedzfile = open("sortedindex/z.txt", "w+")
 # Numbers
 sortednumberfile = open("sortedindex/numbers.txt", "w+")
 
+#open file for big merging
+mergedfile = open("mergedfile.txt", "w+")
 
 
 partialIndexFileList = [
@@ -86,6 +116,8 @@ for i in range(len(partialIndexFileList)):
     lines = sorted(partialIndexFile.readlines())
     for line in lines:
         sortedPartialIndexFile.write(line)
+
+mergefiles(openedfiles, mergedfile)
 
 # Letters!
 afile.close()
@@ -148,4 +180,4 @@ sortedzfile.close()
 
 # Numbers!
 sortednumberfile.close()
-
+mergedfile.close()

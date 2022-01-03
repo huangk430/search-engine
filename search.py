@@ -178,6 +178,32 @@ def getPosting(token, invertedIndexFile, pointerMap):
             return []
         currLine = invertedIndexFile.readline()
 
+# given a list of postings, get the common ones between every single on the list
+def getFinalPostingScore(queryWordPostingList):
+    '''
+    queryWordPostingList: a list of a lists of tuples!
+
+    Postings (x:y) – document number and word count
+
+    :return: A list with ONE list that has the COMBINED postings
+    '''
+    partialScoreMap = {}
+    for postingList in queryWordPostingList:
+        for posting in postingList:
+            word = posting[0]
+            freq = posting[1]
+            if word in partialScoreMap:
+                partialScoreMap[word] += freq
+            else:
+                partialScoreMap[word] = freq
+
+    finalScorePosting = []
+    for word, score in partialScoreMap.items():
+        finalScorePosting.append((word, score))
+
+    return finalScorePosting
+
+
 
 def startTimer():
     return time.time()

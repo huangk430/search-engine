@@ -47,3 +47,15 @@ def stem(word):
     # just do porter.stem
     return porter.stem(word)
 
+#takes in html and returns a list of tokens
+def parseFile(raw_html):
+    # specialChars = "©,.!:#$%^&*@()-_=+{}|\/?<>;'\""
+    soup = BeautifulSoup(raw_html, "lxml")
+    text = soup.get_text()
+    # for specialChar in specialChars:
+    #     text = text.replace(specialChar, " ")
+    text = text.replace("\\t", " ")
+    text = text.replace("\\r", " ")
+    text = text.replace("\\n", " ")
+    text = text.replace("\\", " ")
+    return text.split()

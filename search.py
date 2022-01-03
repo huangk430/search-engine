@@ -135,6 +135,49 @@ def getPostingFromStart(partialIndexFile, word):
 
     return postings
 
+# get the posting
+def getPosting(token, invertedIndexFile, pointerMap):
+    if len(token) == 0:
+        return []
+    abrv = ""
+    if len(token) < 2:
+        abrv = token[0]
+    else:
+        abrv = token[0:2]
+
+    bytesInAdvance = pointerMap[abrv]
+
+    invertedIndexFile.seek(
+        bytesInAdvance
+    )  # go to the file where it has the start of the abbriveation!
+
+    currLine = invertedIndexFile.readline()
+    while currLine:
+        processedLine = currLine.split(":")
+        currentToken = processedLine[0]
+        if token == currentToken:
+            numlst = []
+            numStr = ""
+            processedLine = currLine.split(":")
+
+            for char in processedLine[1]:
+                if char.isnumeric():
+                    numStr += char
+                else:
+                    if numStr != "":
+                        numlst.append(int(numStr))
+                        numStr = ""
+
+            numlst = [numlst[i:i + 2] for i in range(0, len(numlst), 2)]
+            numlst = [tuple(n) for n in numlst]  # list of tuples!
+
+            return numlst
+
+        elif currentToken > token:
+            print("CUT OFF")
+            return []
+        currLine = invertedIndexFile.readline()
+
 
 def startTimer():
     return time.time()

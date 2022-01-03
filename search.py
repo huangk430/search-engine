@@ -103,6 +103,39 @@ def stem(word):
     # just do porter.stem
     return porter.stem(word)
 
+invertedIndex = dict()
+
+def getPostingFromStart(partialIndexFile, word):
+    '''
+    Should have the pointer already!
+    '''
+    postings = []
+
+    currLine = partialIndexFile.readline()
+    while currLine:
+        numlst = []
+        numStr = ""
+        processedLine = currLine.split(":")
+        if processedLine[0] != word:
+            return postings
+
+        for char in processedLine[1]:
+            if char.isnumeric():
+                numStr += char
+            else:
+                if numStr != "":
+                    numlst.append(int(numStr))
+                    numStr = ""
+
+        numlst = [numlst[i:i + 2] for i in range(0, len(numlst), 2)]
+        numlst = [tuple(n) for n in numlst]  # list of tuples!
+
+        postings.append(numlst[0])  # bc each one only has one item right now!
+        currLine = partialIndexFile.readline()
+
+    return postings
+
+
 def startTimer():
     return time.time()
 

@@ -82,6 +82,27 @@ def fileToURL(txtFile):
 
     return urlMap
 
+    
+def tokenize(word):
+    result = ""
+    letters = {
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+    }
+    digits = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}
+
+    for c in word:
+        if c.lower() in letters or c in digits:
+            result += c.lower()
+    return result
+
+
+def stem(word):
+    # do stemming on the word!
+    # https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
+    # just do porter.stem
+    return porter.stem(word)
+
 
 
 def readIndex(invertedIndexFile):
@@ -115,9 +136,7 @@ invertedIndexFile = open("mergedfile.txt", "r")
 
 pointerMap = readIndex(invertedIndexFile)
 
-# invertedIndex = fileToIndex("fileindex.txt")
 urlMap = fileToURL("URLMap.txt")
-# print(urlMap)
 searchQuery = ""
 rankedUrls = []  # this list will just be of size 20! don't need to store mroe
 stopTerm = "STOP"

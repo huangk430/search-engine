@@ -203,6 +203,12 @@ def getFinalPostingScore(queryWordPostingList):
 
     return finalScorePosting
 
+def getDocID(singlePosting):
+    return singlePosting[0]
+
+def getTFIDFScore(tf, df, N):
+    #w = (1+log(tf)) * log(N/df)
+    return (1 + np.log(tf)) * np.log(N / df)
 
 
 def startTimer():

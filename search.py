@@ -82,7 +82,7 @@ def fileToURL(txtFile):
 
     return urlMap
 
-    
+
 def tokenize(word):
     result = ""
     letters = {
@@ -102,6 +102,14 @@ def stem(word):
     # https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
     # just do porter.stem
     return porter.stem(word)
+
+def startTimer():
+    return time.time()
+
+def printTimeElapsed(starTime):
+    endTime = time.time()
+    print("The seconds elapsed for this search is={0}".format(endTime -
+                                                            startTime))
 
 
 
@@ -146,6 +154,50 @@ N = len(urlMap)
 urlScores = []
 heapify(urlScores)
 
+while searchQuery != stopTerm:
+    searchQuery = input("Enter your search query: ")
+    startTime = startTimer()
+
+    searchQueryWords = searchQuery.split()
+
+    # tokenize and stem every word inside of searchArr!
+    for i in range(len(searchQueryWords)):
+        word = tokenize(searchQueryWords[i])
+        word = stem(searchQueryWords[i])
+        print("tokenized word=", word)
+        searchQueryWords[i] = word
+
+    if searchQuery != stopTerm:
+        queryWordPostingList = [
+        ]  # a list of all the postings from the individual search query terms
+        for token in searchQueryWords:
+            posting = getPosting(token, invertedIndexFile,
+                                 pointerMap)  # will get a LIST of TUPLES
+            # print("posting for", token, " ", posting)
+
+            # SORT THE POSTING HERE so it's easier for merging!
+            # posting.sort(key=lambda i: i[0])
+
+            queryWordPostingList.append(
+                posting)  # this will be a list with a list inside of tuples!
+
+        finalPostingScore = getFinalPostingScore(queryWordPostingList)
+        for posting in finalPostingScore:
+            urlId = posting[0]
+            tf = posting[1]
+            df = len(finalPostingScore)
+            tdidf = getTFIDFScore(tf, df, N)
+            heappush(urlScores, (tdidf, urlId))
+            if len(urlScores) > 20:
+                heappop(urlScores)
+
+        printTimeElapsed(
+            startTime)  # dont need to account for the printing times!
+
+        # these wont be sorted! will just be the top 20 url scores
+        # TODO ACTUALLY SORT the urls!
+        for tfidf, urlId in urlScores:
+            print(urlMap[urlId])
 
 
 # Letters!

@@ -102,7 +102,7 @@ def getFrequencyMap(wordList):
     for word in wordList:
         freqMap[word] += 1
     return freqMap
-    
+
 def getPartialIndexFile(word):
     '''
     Return the file that it should write to
@@ -162,6 +162,50 @@ def getPartialIndexFile(word):
         return zfile
     else:
         return numberfile
+
+def addToIndex(uniqueWordList, docID, freqMap):
+    global numUniqueTokens
+    global indexSize
+    # create the hashmap!
+    for word in uniqueWordList:
+        # posting = Posting(docID, freqMap)
+
+        # add it to the first letter of the term!
+        partialIndexPointer = getPartialIndexFile(word)
+        partialIndexPointer.write(f"{word}: ({docID}, {freqMap[word]})\n")
+        # invertedIndex[word].append((docID, freqMap[word]))
+
+    # need to somehow create the index!
+
+
+urltxt = open("URLMap.txt", "a+")
+# https://stackoverflow.com/questions/10377998/how-can-i-iterate-over-files-in-a-given-directory
+directory = "/Users/kellyhuang/Downloads/DEV"
+for subdomainFolder in os.listdir(directory):
+    subdomainFullPath = os.path.join(directory, subdomainFolder)
+    for file in os.listdir(subdomainFullPath):
+        docID += 1
+        jsonFilePath = os.path.join(subdomainFullPath, file)
+        with open(jsonFilePath) as f:
+            data = json.load(f)
+            html_content = data["content"]
+            wordList = parseFile(html_content)
+            docURL = data["url"]
+            print(docURL)
+            urltxt.write(f"{docID}, {docURL}\n")
+            tokenizedWordList = []
+            for word in wordList:
+                result = tokenize(word)
+                result = stem(result)
+                if result != '':
+                    tokenizedWordList.append(result)
+
+            freqMap = getFrequencyMap(tokenizedWordList)
+
+            addToIndex(set(tokenizedWordList), docID, freqMap)
+
+            numIndexDocuments = docID
+f.close()
 
 
 print(f'Number of indexed documents: {numIndexDocuments}')

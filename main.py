@@ -59,3 +59,10 @@ def parseFile(raw_html):
     text = text.replace("\\n", " ")
     text = text.replace("\\", " ")
     return text.split()
+
+# gets frequency of word in a doc
+def getFrequencyMap(wordList):
+    freqMap = defaultdict(int)
+    for word in wordList:
+        freqMap[word] += 1
+    return freqMap
